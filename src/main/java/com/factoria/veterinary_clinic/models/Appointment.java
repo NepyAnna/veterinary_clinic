@@ -1,6 +1,7 @@
 package com.factoria.veterinary_clinic.models;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Appointment {
     private Long id;
@@ -50,9 +51,16 @@ public class Appointment {
     }
 
     @Override
-    public String toString() { 
+    public String toString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     return String.format(
-        "Appointment[id=%d, patientId=%d, patientName='%s', type='%s', reason='%s', status='%s']",
-        id, patientId, patientName, type, reason, status);
+        "Appointment[id=%d, patientId=%d, patientName='%s', appointmentDateTime='%s',type='%s', reason='%s', status='%s']",
+        id,
+        patientId,
+        patientName, 
+        appointmentDateTime != null ? appointmentDateTime.format(formatter) : "null",
+        type,
+        reason,
+        status);
     }
 }
