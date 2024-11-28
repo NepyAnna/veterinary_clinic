@@ -1,4 +1,4 @@
-package dtos;
+package com.factoria.veterinary_clinic.dtos;
 
 public record AppointmentDto() {
 
