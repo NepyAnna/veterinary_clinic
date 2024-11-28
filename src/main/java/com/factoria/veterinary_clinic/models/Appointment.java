@@ -48,4 +48,11 @@ public class Appointment {
     public String getStatus() {
         return status;
     }
+
+    @Override
+    public String toString() { 
+    return String.format(
+        "Appointment[id=%d, patientId=%d, patientName='%s', type='%s', reason='%s', status='%s']",
+        id, patientId, patientName, type, reason, status);
+    }
 }
