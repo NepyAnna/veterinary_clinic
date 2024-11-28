@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 public class Appointment {
     private Long id;
+    private Long patientId;
+    private String patientName;
     private LocalDateTime appointmentDateTime;
     private String type;
     private String reason;
@@ -11,7 +13,9 @@ public class Appointment {
 
     protected Appointment() {}
 
-    public Appointment(Long id, LocalDateTime appointmentDateTime,String type, String reason, String status) {
+    public Appointment(Long patientId, String patientName, LocalDateTime appointmentDateTime,String type, String reason, String status) {
+        this.patientId =patientId;
+        this.patientName = patientName;
         this.type = type;
         this.reason = reason;
         this.status = status;
@@ -19,6 +23,14 @@ public class Appointment {
 
     public Long getId() {
         return id;
+    }
+
+    public Long getPatientId() {
+        return patientId;
+    }
+
+    public String getPatientName() {
+        return patientName;
     }
 
     public LocalDateTime getAppointmentDateTime() {
