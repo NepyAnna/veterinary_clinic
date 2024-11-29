@@ -1,5 +1,5 @@
 package com.factoria.veterinary_clinic.dtos;
 
-public record AppointmentDto() {
+import java.time.LocalDateTime;
 
-}
+public record AppointmentDto(Long patientId,  String patientName, LocalDateTime appointmentDateTime, String type, String reason, String status) {}
