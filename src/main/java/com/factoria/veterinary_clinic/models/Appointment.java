@@ -3,19 +3,14 @@ package com.factoria.veterinary_clinic.models;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 
-@Entity
-@Table(name = "appointments")
 public class Appointment {
-    
-    @Id 
-    @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id_appoinment")
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long patientId;
@@ -25,10 +20,12 @@ public class Appointment {
     private String reason;
     private String status;
 
-    protected Appointment() {}
+    protected Appointment() {
+    }
 
-    public Appointment(Long patientId, String patientName, LocalDateTime appointmentDateTime,String type, String reason, String status) {
-        this.patientId =patientId;
+    public Appointment(Long patientId, String patientName, LocalDateTime appointmentDateTime, String type,
+            String reason, String status) {
+        this.patientId = patientId;
         this.patientName = patientName;
         this.type = type;
         this.reason = reason;
@@ -66,14 +63,14 @@ public class Appointment {
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    return String.format(
-        "Appointment[id=%d, patientId=%d, patientName='%s', appointmentDateTime='%s',type='%s', reason='%s', status='%s']",
-        id,
-        patientId,
-        patientName, 
-        appointmentDateTime != null ? appointmentDateTime.format(formatter) : "null",
-        type,
-        reason,
-        status);
+        return String.format(
+                "Appointment[id=%d, patientId=%d, patientName='%s', appointmentDateTime='%s',type='%s', reason='%s', status='%s']",
+                id,
+                patientId,
+                patientName,
+                appointmentDateTime != null ? appointmentDateTime.format(formatter) : "null",
+                type,
+                reason,
+                status);
     }
 }
