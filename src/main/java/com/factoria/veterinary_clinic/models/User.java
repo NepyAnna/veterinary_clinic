@@ -102,8 +102,4 @@ public class User {
         User user1 = new User("Zeus", 2, "Dog", "Male", "1", "Kari", "Tovar", "605965874");
         user1.displayInformation();
     }
-    public static void main(String[] args) {
-        User user1 = new User("Michi", 4, "Cat", "Female", "2", "Mariangel", "Tovar", "605965875");
-        user1.displayInformation();
-    }
 }
