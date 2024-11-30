@@ -3,30 +3,40 @@ package com.factoria.veterinary_clinic.models;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "appointments")
 public class Appointment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_appointment")
     private Long id;
 
-    private Long patientId;
-    private String patientName;
+    @Column(name = "appointment_date_time", nullable = false)
     private LocalDateTime appointmentDateTime;
+
+    @Column(name = "type", nullable = false, length = 50)
     private String type;
+
+    @Column(name = "reason", length = 255)
     private String reason;
+
+    @Column(name = "status", nullable = false, length = 20)
     private String status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_patient", nullable = false)
+    private Patient patient;
 
     protected Appointment() {
     }
 
-    public Appointment(Long patientId, String patientName, LocalDateTime appointmentDateTime, String type,
+    public Appointment(Patient patient, LocalDateTime appointmentDateTime, String type,
             String reason, String status) {
-        this.patientId = patientId;
-        this.patientName = patientName;
+        this.patient = patient;
+        this.appointmentDateTime = appointmentDateTime;
         this.type = type;
         this.reason = reason;
         this.status = status;
@@ -36,12 +46,8 @@ public class Appointment {
         return id;
     }
 
-    public Long getPatientId() {
-        return patientId;
-    }
-
-    public String getPatientName() {
-        return patientName;
+    public Patient getPatient() {
+        return patient;
     }
 
     public LocalDateTime getAppointmentDateTime() {
@@ -64,10 +70,10 @@ public class Appointment {
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return String.format(
-                "Appointment[id=%d, patientId=%d, patientName='%s', appointmentDateTime='%s',type='%s', reason='%s', status='%s']",
+                "Appointment[id=%d, patientId=%d, patientName='%s', appointmentDateTime='%s', type='%s', reason='%s', status='%s']",
                 id,
-                patientId,
-                patientName,
+                patient != null ? patient.getId() : null,
+                patient != null ? patient.getName() : "null",
                 appointmentDateTime != null ? appointmentDateTime.format(formatter) : "null",
                 type,
                 reason,
