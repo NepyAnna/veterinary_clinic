@@ -3,6 +3,7 @@ package com.factoria.veterinary_clinic.controllers;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.factoria.veterinary_clinic.dtos.AppointmentDto;
+import com.factoria.veterinary_clinic.models.Appointment;
 import com.factoria.veterinary_clinic.services.AppointmentService;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
@@ -41,6 +43,11 @@ public class AppointmentController {
         return entity;
     } 
 
+    @PutMapping("/{id}")
+    public Appointment updateAppointment(@PathVariable Long id, @RequestBody Appointment appointment) {
+        return service.updateAppointment(id, appointment);
+    }
+    
     @DeleteMapping("/{id}")
     public void deleteAppointment(@PathVariable Long id) {
         service.deleteAppointment(id);

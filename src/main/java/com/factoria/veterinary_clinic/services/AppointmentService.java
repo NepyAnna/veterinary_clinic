@@ -20,4 +20,9 @@ public class AppointmentService {
     public void deleteAppointment(Long id) {
         repository.deleteById(id);
     }
+
+    public Appointment updateAppointment(Long id, Appointment appointment) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'updateAppointment'");
+    }
 }
