@@ -2,20 +2,19 @@ package com.factoria.veterinary_clinic.controllers;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.factoria.veterinary_clinic.dtos.AppointmentDto;
-//import com.factoria.veterinary_clinic.dtos.AppointmentDto;
-import com.factoria.veterinary_clinic.models.Appointment;
 import com.factoria.veterinary_clinic.services.AppointmentService;
-
 import java.util.List;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping(path="/appointments")
+@RequestMapping(path="appointments")
 public class AppointmentController {
     private AppointmentService service;
 
@@ -23,7 +22,7 @@ public class AppointmentController {
         this.service = service;
     }
 
-    @GetMapping
+    @GetMapping("")
     public List<AppointmentDto> index() {
         return service.findAll().stream()
         .map(appointment -> new AppointmentDto(
@@ -37,9 +36,13 @@ public class AppointmentController {
                       .toList();
     }
 
-    /*@GetMapping("appointments")
-    public AppointmentDto store(@RequestBody AppointmentDto entity) {///Or maybe metod type shoud be AppointmentDto??
+    @PostMapping("")
+    public AppointmentDto store(@RequestBody AppointmentDto entity) {///Or maybe metod type shoud be Appointment??
         return entity;
-    }*/
-    
+    } 
+
+    @DeleteMapping("/{id}")
+    public void deleteAppointment(@PathVariable Long id) {
+        service.deleteAppointment(id);
+    }
 }
