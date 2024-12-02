@@ -82,4 +82,20 @@ public class Appointment {
                 reason,
                 status);
     }
+
+    public void setAppointmentDateTime(LocalDateTime appointmentDateTime2) {
+        this.appointmentDateTime = appointmentDateTime2;
+    }
+
+    public void setType(String type2) {
+        this.type = type2;
+    }
+
+    public void setReason(String reason2) {
+        this.reason = reason2;
+    }
+
+    public void setStatus(String status2) {
+        this.status = status2;
+    }
 }
