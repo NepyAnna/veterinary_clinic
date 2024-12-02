@@ -2,9 +2,6 @@ package com.factoria.veterinary_clinic.models;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-//import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -30,7 +27,6 @@ public class Appointment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_patient", nullable = false)
-    //@JsonIgnore// або змінити index() в контролері???!!
     private Patient patient;
 
     protected Appointment() {
@@ -87,15 +83,15 @@ public class Appointment {
         this.appointmentDateTime = appointmentDateTime2;
     }
 
-    public void setType(String type2) {
-        this.type = type2;
+    public void setType(String entity) {
+        this.type = entity;
     }
 
-    public void setReason(String reason2) {
-        this.reason = reason2;
+    public void setReason(String entity) {
+        this.reason = entity;
     }
 
-    public void setStatus(String status2) {
-        this.status = status2;
+    public void setStatus(String entity) {
+        this.status = entity;
     }
 }
