@@ -15,9 +15,9 @@ INSERT INTO patients (name, age, breed, gender, identification_number, guardian_
 
 
 INSERT INTO appointments (id_patient, appointment_date_time, type, reason, status) VALUES 
-(1, '2024-12-01 10:00:00', 'Checkup', 'Routine checkup', 'Scheduled'),
-(2, '2024-12-02 14:00:00', 'Checkup', 'Routine checkup', 'Scheduled'),
-(3, '2024-12-03 09:00:00', 'Checkup', 'Routine checkup', 'Scheduled'),
-(4, '2024-12-04 11:00:00', 'Checkup', 'Routine checkup', 'Scheduled'),
-(5, '2024-12-05 16:00:00', 'Checkup', 'Routine checkup', 'Scheduled'),
-(1, '2024-12-06 10:00:00', 'Vaccination', 'Vaccination booster shot', 'Scheduled');  
+(1, '2024-12-01 10:00:00', 'STANDARD', 'Routine checkup', 'PENDING'),
+(2, '2024-12-02 14:00:00', 'STANDARD', 'Routine checkup', 'PENDING'),
+(3, '2024-12-03 09:00:00', 'STANDARD', 'Routine checkup', 'PENDING'),
+(4, '2024-12-04 11:00:00', 'STANDARD', 'Routine checkup', 'PENDING'),
+(5, '2024-12-05 16:00:00', 'STANDARD', 'Routine checkup', 'PENDING'),
+(1, '2024-12-06 10:00:00', 'STANDARD', 'Vaccination booster shot', 'PENDING');  
