@@ -1,6 +1,5 @@
 package com.factoria.veterinary_clinic.models;
 
-import java.util.Date;
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -35,13 +34,6 @@ public class Patient {
     @Column(name = "guardian_phone", length = 20)
     private String guardianPhone;
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "date_of_entry")
-    private Date dateOfEntry;
-
-    @Column(name = "type", length = 50)
-    private String type;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user", nullable = true)
     private User user;
@@ -53,7 +45,7 @@ public class Patient {
     }
 
     public Patient(String name, int age, String breed, String gender, String identificationNumber,
-            String guardianName, String guardianPhone, Date dateOfEntry, String type, User user) {
+            String guardianName, String guardianPhone, User user) {
         this.name = name;
         this.age = age;
         this.breed = breed;
@@ -61,8 +53,6 @@ public class Patient {
         this.identificationNumber = identificationNumber;
         this.guardianName = guardianName;
         this.guardianPhone = guardianPhone;
-        this.dateOfEntry = dateOfEntry;
-        this.type = type;
         this.user = user;
     }
 
@@ -98,14 +88,6 @@ public class Patient {
         return guardianPhone;
     }
 
-    public Date getDateOfEntry() {
-        return dateOfEntry;
-    }
-
-    public String getType() {
-        return type;
-    }
-
     public User getUser() {
         return user;
     }
@@ -117,6 +99,47 @@ public class Patient {
     @Override
     public String toString() {
         return String.format("Patient[id=%d, name='%s', age=%d, breed='%s', gender='%s', type='%s']",
-                id_patient, name, age, breed, gender, type);
+                id_patient, name, age, breed, gender);
+    }
+
+
+    public void setId_patient(Long id_patient) {
+        this.id_patient = id_patient;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public void setBreed(String breed) {
+        this.breed = breed;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setIdentificationNumber(String identificationNumber) {
+        this.identificationNumber = identificationNumber;
+    }
+
+    public void setGuardianName(String guardianName) {
+        this.guardianName = guardianName;
+    }
+
+    public void setGuardianPhone(String guardianPhone) {
+        this.guardianPhone = guardianPhone;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
     }
 }
