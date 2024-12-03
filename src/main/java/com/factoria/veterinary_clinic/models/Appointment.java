@@ -2,6 +2,10 @@ package com.factoria.veterinary_clinic.models;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+import com.factoria.veterinary_clinic.enums.AppointmentStatus;
+import com.factoria.veterinary_clinic.enums.AppointmentType;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -16,14 +20,16 @@ public class Appointment {
     @Column(name = "appointment_date_time", nullable = false)
     private LocalDateTime appointmentDateTime;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, length = 50)
-    private String type;
+    private AppointmentType type;
 
     @Column(name = "reason", length = 255)
     private String reason;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
-    private String status;
+    private AppointmentStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_patient", nullable = false)
@@ -32,8 +38,8 @@ public class Appointment {
     protected Appointment() {
     }
 
-    public Appointment(Patient patient, LocalDateTime appointmentDateTime, String type,
-            String reason, String status) {
+    public Appointment(Patient patient, LocalDateTime appointmentDateTime, AppointmentType type,
+            String reason, AppointmentStatus status) {
         this.patient = patient;
         this.appointmentDateTime = appointmentDateTime;
         this.type = type;
@@ -53,7 +59,7 @@ public class Appointment {
         return appointmentDateTime;
     }
 
-    public String getType() {
+    public AppointmentType getType() {
         return type;
     }
 
@@ -61,7 +67,7 @@ public class Appointment {
         return reason;
     }
 
-    public String getStatus() {
+    public AppointmentStatus getStatus() {
         return status;
     }
 
@@ -83,7 +89,7 @@ public class Appointment {
         this.appointmentDateTime = appointmentDateTime2;
     }
 
-    public void setType(String entity) {
+    public void setType(AppointmentType entity) {
         this.type = entity;
     }
 
@@ -91,7 +97,7 @@ public class Appointment {
         this.reason = entity;
     }
 
-    public void setStatus(String entity) {
+    public void setStatus(AppointmentStatus entity) {
         this.status = entity;
     }
 }
