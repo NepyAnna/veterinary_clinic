@@ -6,7 +6,7 @@ INSERT INTO users (name, password, email) VALUES
 ('Bob Green', 'password202', 'bobgreen@example.com');
 
 
-INSERT INTO patients (name, age, breed, gender, identification_number, guardian_name, guardian_phone, date_of_entry, type, id_user) VALUES 
+INSERT INTO patients (name, age, breed, gender, identification_number, guardian_name, guardian_phone, id_user) VALUES 
 ('Zeus', 2, 'Dog', 'Male', '12345', 'John Doe', '1234567890', CURRENT_DATE, 'Dog', 1),
 ('Bella', 3, 'Cat', 'Female', '12346', 'Jane Smith', '0987654321', CURRENT_DATE, 'Cat', 2),
 ('Charlie', 4, 'Rabbit', 'Male', '12347', 'Tom White', '1112233445', CURRENT_DATE, 'Rabbit', 3),

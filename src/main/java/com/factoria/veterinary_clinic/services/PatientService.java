@@ -1,11 +1,11 @@
 package com.factoria.veterinary_clinic.services;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
+//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 
 import java.util.List;
 import java.util.Optional;
 
-import javax.crypto.spec.PBEParameterSpec;
+//import javax.crypto.spec.PBEParameterSpec;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import com.factoria.veterinary_clinic.models.Patient;
 import com.factoria.veterinary_clinic.repositories.PatientRepository;
 import com.factoria.veterinary_clinic.repositories.UserRepository;
 
-import aj.org.objectweb.asm.Type;
+//import aj.org.objectweb.asm.Type;
 import jakarta.transaction.Transactional;
 
     @Service
@@ -54,8 +54,8 @@ public class PatientService {
     }
      @Transactional
     public Patient updatePatient(Long id, PatientDto patientDto) {
-        Type type = userRepository.findById()
-            .orElseThrow(() -> new IllegalArgumentException("Type not found"));
+       /* Type type = userRepository.findById()
+            .orElseThrow(() -> new IllegalArgumentException("Type not found"));*/
 
         Patient patient = patientRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Patient not found"));
@@ -69,6 +69,7 @@ public class PatientService {
         patient.setGuardianPhone(patientDto.guardianPhone());
 
         patientRepository.save(patient);
+        return null;
     }
     @Transactional
     public void deletePatient(Long id) {
