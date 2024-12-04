@@ -1,18 +1,10 @@
 package com.factoria.veterinary_clinic.models;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import java.util.List;
 
 @Entity
 @Table(name = "patients")
@@ -46,9 +38,11 @@ public class Patient {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user", nullable = true)
+    @JsonIgnore
     private User user;
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Appointment> appointments;
 
     protected Patient() {
@@ -104,12 +98,6 @@ public class Patient {
 
     public List<Appointment> getAppointments() {
         return appointments;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Patient[id=%d, name='%s', age=%d, breed='%s', gender='%s', type='%s']",
-                id_patient, name, age, breed, gender);
     }
 
     public void setId_patient(Long id_patient) {

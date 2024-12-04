@@ -1,81 +1,95 @@
 package com.factoria.veterinary_clinic.controllers;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.factoria.veterinary_clinic.dtos.AppointmentDto;
 import com.factoria.veterinary_clinic.dtos.PatientDto;
 import com.factoria.veterinary_clinic.models.Patient;
 import com.factoria.veterinary_clinic.services.PatientService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/patients")
-
 public class PatientController {
 
-    @Autowired
-    private PatientService patientService;
+    private final PatientService patientService;
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Patient>> getAllPatients() {
+    @Autowired
+    public PatientController(PatientService patientService) {
+        this.patientService = patientService;
+    }
+
+    @GetMapping
+    public List<PatientDto> getAllPatients() {
         List<Patient> patients = patientService.getAllPatients();
-        return ResponseEntity.ok(patients);
+        return patients.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Patient> getPatientById(@PathVariable Long id) {
+    public ResponseEntity<PatientDto> getPatientById(@PathVariable Long id) {
         Optional<Patient> patient = patientService.getPatientById(id);
-        return patient.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
-
+        return patient.map(p -> ResponseEntity.ok(convertToDto(p)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<String> createPatient(@RequestBody PatientDto patientDto) {
+    @PostMapping
+    public ResponseEntity<Patient> createPatient(@RequestBody PatientDto patientDto) {
+        Patient patient = patientService.createPatient(patientDto);
+        return ResponseEntity.ok(patient);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<PatientDto> updatePatient(@PathVariable Long id, @RequestBody PatientDto patientDto) {
         try {
-            Patient createdPatient = patientService.addPatient(patientDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body("Patient created with ID: " + createdPatient.getId());
+            Patient updatedPatient = patientService.updatePatient(id, patientDto);
+
+            PatientDto updatedPatientDto = convertToDto(updatedPatient);
+
+            return ResponseEntity.ok(updatedPatientDto);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid data: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
+            return ResponseEntity.notFound().build();
         }
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<String> updatePatient(@PathVariable Long id, @RequestBody PatientDto patientDto) {
-        try {
-            patientService.updatePatient(id, patientDto);
-            return ResponseEntity.ok("Patient updated successfully");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Patient or type not found: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred while updating the patient: " + e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deletePatient(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
         try {
             patientService.deletePatient(id);
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Patient not found: " + e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred while deleting the patient: " + e.getMessage());
+            return ResponseEntity.notFound().build();
         }
     }
+
+    private PatientDto convertToDto(Patient patient) {
+        List<AppointmentDto> appointmentDtos = patient.getAppointments().stream()
+                .map(appointment -> new AppointmentDto(
+                        appointment.getId(),
+                        patient.getId(),
+                        patient.getName(),
+                        appointment.getAppointmentDateTime(),
+                        appointment.getType(),
+                        appointment.getReason(),
+                        appointment.getStatus()))
+                .collect(Collectors.toList());
+
+        return new PatientDto(
+                patient.getId(),
+                patient.getName(),
+                patient.getAge(),
+                patient.getBreed(),
+                patient.getGender(),
+                patient.getIdentificationNumber(),
+                patient.getGuardianName(),
+                patient.getGuardianPhone(),
+                patient.getUser().getId(),
+                appointmentDtos);
+    }
+
 }

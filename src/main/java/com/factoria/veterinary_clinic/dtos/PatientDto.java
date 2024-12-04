@@ -1,12 +1,16 @@
 package com.factoria.veterinary_clinic.dtos;
 
+import java.util.List;
+
 public record PatientDto(
-        String name,
-        int age,
-        String breed,
-        String gender,
-        String identificationNumber,
-        String guardianName,
-        String guardianPhone,
-        Long userId) {
+                Long id,
+                String name,
+                int age,
+                String breed,
+                String gender,
+                String identificationNumber,
+                String guardianName,
+                String guardianPhone,
+                Long userId,
+                List<AppointmentDto> appointments) {
 }
