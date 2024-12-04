@@ -1,5 +1,6 @@
 package com.factoria.veterinary_clinic.repositories;
 
-@Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-}
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.factoria.veterinary_clinic.models.User;
+
+public interface UserRepository extends JpaRepository<User, Long> {}
