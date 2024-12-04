@@ -2,8 +2,6 @@ package com.factoria.veterinary_clinic.models;
 
 import java.util.List;
 
-import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,8 +13,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "patients")
@@ -115,7 +111,6 @@ public class Patient {
         return String.format("Patient[id=%d, name='%s', age=%d, breed='%s', gender='%s', type='%s']",
                 id_patient, name, age, breed, gender);
     }
-
 
     public void setId_patient(Long id_patient) {
         this.id_patient = id_patient;
