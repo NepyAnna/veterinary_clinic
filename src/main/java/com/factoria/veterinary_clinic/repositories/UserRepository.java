@@ -7,4 +7,8 @@ import com.factoria.veterinary_clinic.models.User;
 
 @Repository
 public interface UserRepository extends JpaRepository <User, Long> {
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> feature/usermodel
