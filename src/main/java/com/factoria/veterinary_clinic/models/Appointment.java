@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 import com.factoria.veterinary_clinic.enums.AppointmentStatus;
 import com.factoria.veterinary_clinic.enums.AppointmentType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
 
@@ -33,6 +34,7 @@ public class Appointment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_patient", nullable = false)
+    @JsonBackReference
     private Patient patient;
 
     protected Appointment() {
