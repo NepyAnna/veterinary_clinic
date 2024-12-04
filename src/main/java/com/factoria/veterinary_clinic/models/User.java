@@ -100,5 +100,10 @@ public class User {
         User user1 = new User("Zeus", 2, "Dog", "Male", "1", "Kari", "Tovar", "605965874");
         user1.displayInformation();
     }
+
+        public Object getPassword() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'getPassword'");
+        }
 }
 

@@ -1,10 +1,12 @@
 package com.factoria.veterinary_clinic.services;
-import com.factoria.veterinary_clinic.models.User;
-import com.factoria.veterinary_clinic.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.factoria.veterinary_clinic.models.User;
+import com.factoria.veterinary_clinic.repositories.UserRepository;
 @Service
 public class UserService {
   @Autowired
@@ -21,8 +23,8 @@ public class UserService {
   public User updateUser(Long id, User updatedUser) {
     return userRepository.findById(id).map(user -> {
       user.setName(updatedUser.getName());
-      user.setPassword(updatedUser.getPassword());
-      user.setEmail(updatedUser.getEmail());
+     // user.setPassword(updatedUser.getPassword());
+    // user.setEmail(updatedUser.getEmail());
       return userRepository.save(user);
     }).orElseThrow(() -> new RuntimeException("User not found"));
   }
