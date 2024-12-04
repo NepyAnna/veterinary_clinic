@@ -1,6 +1,8 @@
 package com.factoria.veterinary_clinic.services;
 
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.factoria.veterinary_clinic.dtos.AppointmentDto;
@@ -12,7 +14,7 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class AppointmentService {
-    private AppointmentRepository repository;
+    private final AppointmentRepository repository;
 
     public AppointmentService(AppointmentRepository repository) {
         this.repository = repository;
@@ -47,6 +49,9 @@ public class AppointmentService {
     }
 
     public void deleteAppointment(Long id) {
+        if (!repository.existsById(id)) {
+            throw new RuntimeException("Appointment with id " + id + " not found");
+        }
         repository.deleteById(id);
     }
 
@@ -68,8 +73,11 @@ public class AppointmentService {
                 savedAppointment.getAppointmentDateTime(),
                 savedAppointment.getType(),
                 savedAppointment.getReason(),
-                savedAppointment.getStatus()
-        );
+                savedAppointment.getStatus());
     }
 
+    @Transactional
+    public Optional<Appointment> findById(Long id) {
+        return repository.findById(id);
+    }
 }

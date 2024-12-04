@@ -1,21 +1,19 @@
 package com.factoria.veterinary_clinic.controllers;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import com.factoria.veterinary_clinic.dtos.AppointmentDto;
 import com.factoria.veterinary_clinic.services.AppointmentService;
 import java.util.List;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping(path = "appointments")
+@RequestMapping("/api/appointments")
 public class AppointmentController {
-    private AppointmentService service;
+
+    private final AppointmentService service;
 
     public AppointmentController(AppointmentService service) {
         this.service = service;
@@ -34,6 +32,19 @@ public class AppointmentController {
                 .toList();
     }
 
+    @GetMapping("/{id}")
+    public AppointmentDto getAppointmentById(@PathVariable Long id) {
+        var appointment = service.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Appointment not found"));
+        return new AppointmentDto(
+                appointment.getPatient() != null ? appointment.getPatient().getId() : null,
+                appointment.getPatient() != null ? appointment.getPatient().getName() : null,
+                appointment.getAppointmentDateTime(),
+                appointment.getType(),
+                appointment.getReason(),
+                appointment.getStatus());
+    }
+
     @PostMapping("")
     public AppointmentDto store(@RequestBody AppointmentDto newAppointment) {
         return service.createAppointment(newAppointment);
@@ -43,7 +54,7 @@ public class AppointmentController {
     public AppointmentDto updateAppointment(
             @PathVariable Long id,
             @RequestBody AppointmentDto updatedData) {
-        return service.updateAppointment(id, updatedData); 
+        return service.updateAppointment(id, updatedData);
     }
 
     @DeleteMapping("/{id}")
