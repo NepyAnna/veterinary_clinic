@@ -1,10 +1,7 @@
 package com.factoria.veterinary_clinic.controllers;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
 import com.factoria.veterinary_clinic.dtos.AppointmentDto;
 import com.factoria.veterinary_clinic.services.AppointmentService;
 import java.util.List;
@@ -23,6 +20,7 @@ public class AppointmentController {
     public List<AppointmentDto> index() {
         return service.findAll().stream()
                 .map(appointment -> new AppointmentDto(
+                        appointment.getId(),
                         appointment.getPatient() != null ? appointment.getPatient().getId() : null,
                         appointment.getPatient() != null ? appointment.getPatient().getName() : null,
                         appointment.getAppointmentDateTime(),
@@ -33,16 +31,9 @@ public class AppointmentController {
     }
 
     @GetMapping("/{id}")
-    public AppointmentDto getAppointmentById(@PathVariable Long id) {
-        var appointment = service.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Appointment not found"));
-        return new AppointmentDto(
-                appointment.getPatient() != null ? appointment.getPatient().getId() : null,
-                appointment.getPatient() != null ? appointment.getPatient().getName() : null,
-                appointment.getAppointmentDateTime(),
-                appointment.getType(),
-                appointment.getReason(),
-                appointment.getStatus());
+    public ResponseEntity<AppointmentDto> show(@PathVariable Long id) {
+        AppointmentDto appointment = service.findById(id);
+        return ResponseEntity.ok(appointment);
     }
 
     @PostMapping("")

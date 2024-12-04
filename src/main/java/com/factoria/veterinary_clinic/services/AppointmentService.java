@@ -1,7 +1,6 @@
 package com.factoria.veterinary_clinic.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -40,6 +39,7 @@ public class AppointmentService {
         Appointment savedAppointment = repository.save(newAppointment);
 
         return new AppointmentDto(
+                savedAppointment.getId(),
                 savedAppointment.getPatient().getId(),
                 savedAppointment.getPatient().getName(),
                 savedAppointment.getAppointmentDateTime(),
@@ -68,6 +68,7 @@ public class AppointmentService {
         Appointment savedAppointment = repository.save(existingAppointment);
 
         return new AppointmentDto(
+                savedAppointment.getId(),
                 savedAppointment.getPatient().getId(),
                 savedAppointment.getPatient().getName(),
                 savedAppointment.getAppointmentDateTime(),
@@ -77,7 +78,17 @@ public class AppointmentService {
     }
 
     @Transactional
-    public Optional<Appointment> findById(Long id) {
-        return repository.findById(id);
+    public AppointmentDto findById(Long id) {
+        Appointment appointment = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Appointment with id " + id + " not found"));
+
+        return new AppointmentDto(
+                appointment.getId(),
+                appointment.getPatient().getId(),
+                appointment.getPatient().getName(),
+                appointment.getAppointmentDateTime(),
+                appointment.getType(),
+                appointment.getReason(),
+                appointment.getStatus());
     }
 }
