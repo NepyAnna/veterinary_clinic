@@ -79,6 +79,8 @@ public class PatientController {
                         appointment.getStatus()))
                 .collect(Collectors.toList());
 
+        Long userId = (patient.getUser() != null) ? patient.getUser().getId() : null;
+
         return new PatientDto(
                 patient.getId(),
                 patient.getName(),
@@ -88,8 +90,7 @@ public class PatientController {
                 patient.getIdentificationNumber(),
                 patient.getGuardianName(),
                 patient.getGuardianPhone(),
-                patient.getUser().getId(),
+                userId,
                 appointmentDtos);
     }
-
 }
