@@ -17,8 +17,8 @@ public class AppointmentController {
     }
 
     @GetMapping("")
-    public List<AppointmentDto> index() {
-        return service.findAll().stream()
+    public ResponseEntity<List<AppointmentDto>> index() {
+        List<AppointmentDto> appointments = service.findAll().stream()
                 .map(appointment -> new AppointmentDto(
                         appointment.getId(),
                         appointment.getPatient() != null ? appointment.getPatient().getId() : null,
@@ -28,6 +28,7 @@ public class AppointmentController {
                         appointment.getReason(),
                         appointment.getStatus()))
                 .toList();
+        return ResponseEntity.ok(appointments);
     }
 
     @GetMapping("/{id}")
