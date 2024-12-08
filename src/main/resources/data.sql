@@ -1,10 +1,10 @@
-INSERT INTO users (name, password, email)
+INSERT INTO users (name, password, email, role)
           VALUES 
-          ('John Doe', '$2b$12$8bCaneck4QA5xTJdgj0GFe4gsiQUz8dvNg0kj9cE3QsOaIknc81Wi', 'johndoe@example.com'),
-          ('Jane Smith', '$2b$12$gee.U45CrCcpwOk24A.r9eP1GoUu61V2PK6Hy33y8g1IIVyPG7V36', 'janesmith@example.com'),
-          ('Tom White', '$2b$12$JKHK7Z7LXFpLqhhWIxgZO.6l2olKuFBg2HMu98v.HPWBZzEyU5o46', 'tomwhite@example.com'),
-          ('Alice Brown', '$2b$12$YvrHxhT2RzWU9VD/gCFQSu94.95vYc5LaU/8D20YMoXjBPlPgnp2C', 'alicebrown@example.com'),
-          ('Bob Green', '$2b$12$qpoYhwV1fKJ95LIlC7zccuBpnkyZMmk0PiFQDEkG3O/AzMQRlYbee', 'bobgreen@example.com');
+          ('John Doe', '$2b$12$8bCaneck4QA5xTJdgj0GFe4gsiQUz8dvNg0kj9cE3QsOaIknc81Wi', 'johndoe@example.com', 'USER'),
+          ('Jane Smith', '$2b$12$gee.U45CrCcpwOk24A.r9eP1GoUu61V2PK6Hy33y8g1IIVyPG7V36', 'janesmith@example.com', 'ADMIN'),
+          ('Tom White', '$2b$12$JKHK7Z7LXFpLqhhWIxgZO.6l2olKuFBg2HMu98v.HPWBZzEyU5o46', 'tomwhite@example.com', 'USER'),
+          ('Alice Brown', '$2b$12$YvrHxhT2RzWU9VD/gCFQSu94.95vYc5LaU/8D20YMoXjBPlPgnp2C', 'alicebrown@example.com', 'USER'),
+          ('Bob Green', '$2b$12$qpoYhwV1fKJ95LIlC7zccuBpnkyZMmk0PiFQDEkG3O/AzMQRlYbee', 'bobgreen@example.com', 'USER');
 
 
 INSERT INTO patients (name, age, breed, gender, identification_number, guardian_name, guardian_phone, id_user) VALUES 

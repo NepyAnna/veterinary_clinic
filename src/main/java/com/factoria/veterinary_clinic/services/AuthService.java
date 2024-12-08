@@ -3,6 +3,7 @@ package com.factoria.veterinary_clinic.services;
 import com.factoria.veterinary_clinic.dtos.AuthResponseDto;
 import com.factoria.veterinary_clinic.dtos.LoginDto;
 import com.factoria.veterinary_clinic.dtos.UserDto;
+import com.factoria.veterinary_clinic.enums.Role;
 import com.factoria.veterinary_clinic.models.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,6 +33,7 @@ public class AuthService {
                 userDto.name(),
                 passwordEncoder.encode(userDto.password()),
                 userDto.email());
+        user.setRole(Role.USER);
         userService.createUser(user);
         String token = jwtService.generateToken(user.getName());
         return new AuthResponseDto(token);
