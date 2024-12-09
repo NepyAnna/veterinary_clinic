@@ -19,8 +19,17 @@ public class AppointmentService {
         this.repository = repository;
     }
 
-    public List<Appointment> findAll() {
-        return repository.findAll();
+    public List<AppointmentDto> findAll() {
+        return repository.findAll().stream()
+                .map(appointment -> new AppointmentDto(
+                        appointment.getId(),
+                        appointment.getPatient() != null ? appointment.getPatient().getId() : null,
+                        appointment.getPatient() != null ? appointment.getPatient().getName() : null,
+                        appointment.getAppointmentDateTime(),
+                        appointment.getType(),
+                        appointment.getReason(),
+                        appointment.getStatus()))
+                .toList();
     }
 
     @Transactional

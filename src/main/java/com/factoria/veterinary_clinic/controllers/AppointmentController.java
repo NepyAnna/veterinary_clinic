@@ -18,16 +18,7 @@ public class AppointmentController {
 
     @GetMapping("")
     public ResponseEntity<List<AppointmentDto>> index() {
-        List<AppointmentDto> appointments = service.findAll().stream()
-                .map(appointment -> new AppointmentDto(
-                        appointment.getId(),
-                        appointment.getPatient() != null ? appointment.getPatient().getId() : null,
-                        appointment.getPatient() != null ? appointment.getPatient().getName() : null,
-                        appointment.getAppointmentDateTime(),
-                        appointment.getType(),
-                        appointment.getReason(),
-                        appointment.getStatus()))
-                .toList();
+        List<AppointmentDto> appointments = service.findAll();
         return ResponseEntity.ok(appointments);
     }
 
@@ -38,19 +29,20 @@ public class AppointmentController {
     }
 
     @PostMapping("")
-    public AppointmentDto store(@RequestBody AppointmentDto newAppointment) {
-        return service.createAppointment(newAppointment);
+    public ResponseEntity<AppointmentDto> store(@RequestBody AppointmentDto newAppointment) {
+        AppointmentDto createdAppointment = service.createAppointment(newAppointment);
+        return ResponseEntity.ok(createdAppointment);
     }
 
     @PutMapping("/{id}")
-    public AppointmentDto updateAppointment(
-            @PathVariable Long id,
-            @RequestBody AppointmentDto updatedData) {
-        return service.updateAppointment(id, updatedData);
+    public ResponseEntity<AppointmentDto> updateAppointment(@PathVariable Long id, @RequestBody AppointmentDto updatedData) {
+        AppointmentDto updatedAppointment = service.updateAppointment(id, updatedData);
+        return ResponseEntity.ok(updatedAppointment);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteAppointment(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteAppointment(@PathVariable Long id) {
         service.deleteAppointment(id);
+        return ResponseEntity.noContent().build();
     }
 }
