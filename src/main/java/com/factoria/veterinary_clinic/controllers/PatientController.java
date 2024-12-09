@@ -4,8 +4,13 @@ import com.factoria.veterinary_clinic.dtos.AppointmentDto;
 import com.factoria.veterinary_clinic.dtos.PatientDto;
 import com.factoria.veterinary_clinic.models.Patient;
 import com.factoria.veterinary_clinic.services.PatientService;
+import com.factoria.veterinary_clinic.services.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,38 +22,85 @@ import java.util.stream.Collectors;
 public class PatientController {
 
     private final PatientService patientService;
+    private final UserService userService;
 
     @Autowired
-    public PatientController(PatientService patientService) {
+    public PatientController(PatientService patientService, UserService userService) {
         this.patientService = patientService;
+        this.userService = userService;
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping
-    public List<PatientDto> getAllPatients() {
-        List<Patient> patients = patientService.getAllPatients();
-        return patients.stream()
+    public ResponseEntity<List<PatientDto>> getAllPatients(@AuthenticationPrincipal UserDetails userDetails) {
+        List<Patient> patients;
+
+        if (userDetails.getAuthorities().toString().contains("ROLE_ADMIN")) {
+            patients = patientService.getAllPatients();
+        } else if (userDetails.getAuthorities().toString().contains("ROLE_USER")) {
+            Long userId = getCurrentUserId(userDetails);
+            patients = patientService.getPatientsByUserId(userId);
+        } else {
+            return ResponseEntity.status(403).body(null);
+        }
+
+        List<PatientDto> patientDtos = patients.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
+
+        return ResponseEntity.ok(patientDtos);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PatientDto> getPatientById(@PathVariable Long id) {
+    public ResponseEntity<PatientDto> getPatientById(@PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
         Optional<Patient> patient = patientService.getPatientById(id);
-        return patient.map(p -> ResponseEntity.ok(convertToDto(p)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+
+        if (patient.isPresent()) {
+            if (isCurrentUserPatient(id, userDetails)
+                    || userDetails.getAuthorities().toString().contains("ROLE_ADMIN")) {
+                return ResponseEntity.ok(convertToDto(patient.get()));
+            } else {
+                return ResponseEntity.status(403).body(null);
+            }
+        } else {
+            return ResponseEntity.status(404).body(null);
+        }
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PostMapping
-    public ResponseEntity<Patient> createPatient(@RequestBody PatientDto patientDto) {
+    public ResponseEntity<Patient> createPatient(@RequestBody PatientDto patientDto,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        if (userDetails.getAuthorities().toString().contains("ROLE_USER")) {
+            Long userId = getCurrentUserId(userDetails);
+            patientDto = new PatientDto(patientDto.id(), patientDto.name(), patientDto.age(), patientDto.breed(),
+                    patientDto.gender(), patientDto.identificationNumber(), patientDto.guardianName(),
+                    patientDto.guardianPhone(), userId, patientDto.appointments());
+        }
+
         Patient patient = patientService.createPatient(patientDto);
         return ResponseEntity.ok(patient);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PatientDto> updatePatient(@PathVariable Long id, @RequestBody PatientDto patientDto) {
+    public ResponseEntity<PatientDto> updatePatient(@PathVariable Long id, @RequestBody PatientDto patientDto,
+            @AuthenticationPrincipal UserDetails userDetails) {
         try {
-            Patient updatedPatient = patientService.updatePatient(id, patientDto);
 
+            if (userDetails.getAuthorities().toString().contains("ROLE_USER")) {
+                Long userId = getCurrentUserId(userDetails);
+
+                Optional<Patient> existingPatient = patientService.getPatientById(id);
+                if (existingPatient.isPresent()) {
+                    Patient patient = existingPatient.get();
+                    if (!patient.getUser().getId().equals(userId)) {
+                        return ResponseEntity.status(403).body(null);
+                    }
+                }
+            }
+
+            Patient updatedPatient = patientService.updatePatient(id, patientDto);
             PatientDto updatedPatientDto = convertToDto(updatedPatient);
 
             return ResponseEntity.ok(updatedPatientDto);
@@ -57,9 +109,16 @@ public class PatientController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') or @patientController.isCurrentUserPatient(#id, authentication)")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePatient(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         try {
+
+            if (!isCurrentUserPatient(id, userDetails)
+                    && !userDetails.getAuthorities().toString().contains("ROLE_ADMIN")) {
+                return ResponseEntity.status(403).body(null);
+            }
+
             patientService.deletePatient(id);
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
@@ -92,5 +151,23 @@ public class PatientController {
                 patient.getGuardianPhone(),
                 userId,
                 appointmentDtos);
+    }
+
+    public boolean isCurrentUserPatient(Long patientId, UserDetails userDetails) {
+        Optional<Patient> patient = patientService.getPatientById(patientId);
+
+        if (patient.isPresent()) {
+            return patient.get().getUser().getEmail().equals(userDetails.getUsername());
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isCurrentUserPatientCreation(UserDetails userDetails) {
+        return true;
+    }
+
+    private Long getCurrentUserId(UserDetails userDetails) {
+        return userService.getUserByEmail(userDetails.getUsername()).get().getId();
     }
 }
