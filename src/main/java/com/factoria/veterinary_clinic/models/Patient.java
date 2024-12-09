@@ -60,6 +60,11 @@ public class Patient {
         this.user = user;
     }
 
+    public Patient(Long id, String name) {
+        this.id_patient = id;
+        this.name = name;
+    }
+
     public Long getId() {
         return id_patient;
     }
