@@ -25,4 +25,10 @@ public class AuthController {
     public ResponseEntity<AuthResponseDto> login(@RequestBody LoginDto loginDto) {
         return ResponseEntity.ok(authService.login(loginDto));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout() {
+        return ResponseEntity.ok("Logged out successfully. Please delete the token.");
+    }
+
 }
