@@ -1,5 +1,7 @@
 package com.factoria.veterinary_clinic.models;
 
+import com.factoria.veterinary_clinic.enums.Role;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -20,6 +22,10 @@ public class User {
     @Column(name = "email", length = 100)
     private String email;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role;
+
     protected User() {
     }
 
@@ -27,6 +33,7 @@ public class User {
         this.name = name;
         this.password = password;
         this.email = email;
+        this.role = Role.USER;
     }
 
     public Long getId() {
@@ -59,5 +66,13 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
