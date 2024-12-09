@@ -50,4 +50,22 @@ public class AppointmentServiceTest {
         verify(repository, times(1)).findAll();
     }
 
+    @Test
+    void testFindById() {
+        Patient patient = new Patient(1L, "John Doe");
+        Appointment appointment = new Appointment(
+                patient,
+                LocalDateTime.of(2024, 12, 20, 10, 0),
+                AppointmentType.STANDARD,
+                "General check-up",
+                AppointmentStatus.PENDING);
+
+        when(repository.findById(1L)).thenReturn(Optional.of(appointment));
+
+        AppointmentDto result = service.findById(1L);
+
+        assertNotNull(result);
+        assertEquals("John Doe", result.patientName());
+        verify(repository, times(1)).findById(1L);
+    }
 }
