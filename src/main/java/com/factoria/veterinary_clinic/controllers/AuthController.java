@@ -4,6 +4,8 @@ import com.factoria.veterinary_clinic.dtos.AuthResponseDto;
 import com.factoria.veterinary_clinic.dtos.LoginDto;
 import com.factoria.veterinary_clinic.dtos.UserDto;
 import com.factoria.veterinary_clinic.services.AuthService;
+import com.factoria.veterinary_clinic.services.TokenBlacklistService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,9 +13,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
+    private final TokenBlacklistService tokenBlacklistService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, TokenBlacklistService tokenBlacklistService) {
         this.authService = authService;
+        this.tokenBlacklistService = tokenBlacklistService;
     }
 
     @PostMapping("/register")
@@ -27,8 +31,12 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout() {
-        return ResponseEntity.ok("Logged out successfully. Please delete the token.");
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            tokenBlacklistService.blacklistToken(token);
+        }
+        return ResponseEntity.ok("Logged out successfully!!!");
     }
 
 }
