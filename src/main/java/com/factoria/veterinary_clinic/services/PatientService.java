@@ -80,4 +80,15 @@ public class PatientService {
             throw new IllegalArgumentException("Patient not found with id: " + id);
         }
     }
+
+    public List<Patient> getPatientsByUserId(Long userId) {
+        return patientRepository.findByUserId(userId);
+    }
+
+    public boolean isPatientOwnedByUser(Long patientId, String username) {
+        return patientRepository.findById(patientId)
+                .map(patient -> patient.getUser().getEmail().equals(username))
+                .orElse(false);
+    }
+
 }
