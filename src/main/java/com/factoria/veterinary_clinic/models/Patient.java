@@ -45,7 +45,7 @@ public class Patient {
     @JsonManagedReference
     private List<Appointment> appointments;
 
-    protected Patient() {
+    public Patient() {
     }
 
     public Patient(String name, int age, String breed, String gender, String identificationNumber,

@@ -20,7 +20,7 @@ public class User {
     @Column(name = "email", length = 100)
     private String email;
 
-    protected User() {
+    public User() {
     }
 
     public User(String name, String password, String email) {

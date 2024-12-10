@@ -6,5 +6,7 @@ import com.factoria.veterinary_clinic.enums.AppointmentStatus;
 import com.factoria.veterinary_clinic.enums.AppointmentType;
 
 public record AppointmentDto(Long id, Long patientId, String patientName, LocalDateTime appointmentDateTime,
-        AppointmentType type, String reason, AppointmentStatus status) {
-}
+        AppointmentType type, String reason, AppointmentStatus status) {  
+        }
+
+
