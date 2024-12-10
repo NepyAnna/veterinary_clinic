@@ -2,6 +2,7 @@ package com.factoria.veterinary_clinic.services;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -67,5 +68,40 @@ public class AppointmentServiceTest {
         assertNotNull(result);
         assertEquals("John Doe", result.patientName());
         verify(repository, times(1)).findById(1L);
+    }
+
+    @Test
+    void testDeleteAppointment() {
+        when(repository.existsById(1L)).thenReturn(true);
+
+        service.deleteAppointment(1L);
+
+        verify(repository, times(1)).existsById(1L);
+        verify(repository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void testUpdateAppointment() {
+        Patient patient = new Patient(1L, "John Doe");
+        Appointment existingAppointment = new Appointment();
+        existingAppointment.setPatient(patient);
+        existingAppointment.setAppointmentDateTime(LocalDateTime.of(2024, 12, 20, 10, 0));
+        existingAppointment.setType(AppointmentType.STANDARD);
+        existingAppointment.setReason("General check-up");
+        existingAppointment.setStatus(AppointmentStatus.PENDING);
+
+        /*AppointmentDto updatedDto = new AppointmentDto(existingAppointment);
+
+        when(repository.findById(1L)).thenReturn(Optional.of(existingAppointment));
+        when(repository.save(any(Appointment.class))).thenReturn(existingAppointment);
+
+        AppointmentDto result = service.updateAppointment(1L, updatedDto);
+
+        assertNotNull(result);
+        assertEquals("FollowUp", result.type());
+        assertEquals("Updated reason", result.reason());
+        assertEquals("Completed", result.status());
+        verify(repository, times(1)).findById(1L);
+        verify(repository, times(1)).save(any(Appointment.class));*/
     }
 }

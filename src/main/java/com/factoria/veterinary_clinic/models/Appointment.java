@@ -102,4 +102,12 @@ public class Appointment {
     public void setStatus(AppointmentStatus entity) {
         this.status = entity;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+    }
 }
