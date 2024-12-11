@@ -5,8 +5,6 @@ import com.factoria.veterinary_clinic.dtos.PatientDto;
 import com.factoria.veterinary_clinic.models.Patient;
 import com.factoria.veterinary_clinic.services.PatientService;
 import com.factoria.veterinary_clinic.services.UserService;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +22,6 @@ public class PatientController {
     private final PatientService patientService;
     private final UserService userService;
 
-    @Autowired
     public PatientController(PatientService patientService, UserService userService) {
         this.patientService = patientService;
         this.userService = userService;

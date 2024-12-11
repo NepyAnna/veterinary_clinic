@@ -1,14 +1,11 @@
 package com.factoria.veterinary_clinic.services;
 
 import java.util.List;
-
 import org.springframework.stereotype.Service;
-
 import com.factoria.veterinary_clinic.dtos.AppointmentDto;
 import com.factoria.veterinary_clinic.models.Appointment;
 import com.factoria.veterinary_clinic.models.Patient;
 import com.factoria.veterinary_clinic.repositories.AppointmentRepository;
-
 import jakarta.transaction.Transactional;
 
 @Service

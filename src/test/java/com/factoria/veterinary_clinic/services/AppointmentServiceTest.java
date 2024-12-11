@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -71,6 +70,36 @@ public class AppointmentServiceTest {
     }
 
     @Test
+    void testCreateAppointment() {
+        Patient mockPatient = new Patient(1L, "John Doe");
+        AppointmentDto newAppointment = new AppointmentDto(1L, 1L, "John Doe", null, AppointmentType.STANDARD, "Another reason", AppointmentStatus.PASSED);
+
+        when(repository.findPatientById(newAppointment.patientId())).thenReturn(Optional.of(mockPatient));
+
+        Appointment mockAppointment = new Appointment(
+                mockPatient,
+                newAppointment.appointmentDateTime(),
+                newAppointment.type(),
+                newAppointment.reason(),
+                newAppointment.status());
+        when(repository.save(any(Appointment.class))).thenReturn(mockAppointment);
+
+        AppointmentDto result = service.createAppointment(newAppointment);
+
+        assertNotNull(result);
+        assertEquals(mockAppointment.getId(), result.id());
+        assertEquals(mockAppointment.getPatient().getId(), result.patientId());
+        assertEquals(mockAppointment.getPatient().getName(), result.patientName());
+        assertEquals(mockAppointment.getAppointmentDateTime(), result.appointmentDateTime());
+        assertEquals(mockAppointment.getType(), result.type());
+        assertEquals(mockAppointment.getReason(), result.reason());
+        assertEquals(mockAppointment.getStatus(), result.status());
+
+        verify(repository, times(1)).findPatientById(newAppointment.patientId());
+        verify(repository, times(1)).save(any(Appointment.class));
+    }
+
+    @Test
     void testDeleteAppointment() {
         when(repository.existsById(1L)).thenReturn(true);
 
@@ -83,14 +112,8 @@ public class AppointmentServiceTest {
     @Test
     void testUpdateAppointment() {
         Patient patient = new Patient(1L, "John Doe");
-        Appointment existingAppointment = new Appointment();
-        existingAppointment.setPatient(patient);
-        existingAppointment.setAppointmentDateTime(LocalDateTime.of(2024, 12, 20, 10, 0));
-        existingAppointment.setType(AppointmentType.STANDARD);
-        existingAppointment.setReason("General check-up");
-        existingAppointment.setStatus(AppointmentStatus.PENDING);
-
-        /*AppointmentDto updatedDto = new AppointmentDto(existingAppointment);
+        Appointment existingAppointment = new Appointment(patient,LocalDateTime.of(2024, 12, 20, 10, 0),AppointmentType.STANDARD, "General check-up", AppointmentStatus.PENDING);
+        AppointmentDto updatedDto = new AppointmentDto(null, null, null, null, AppointmentType.STANDARD, "Another reason", AppointmentStatus.PASSED);
 
         when(repository.findById(1L)).thenReturn(Optional.of(existingAppointment));
         when(repository.save(any(Appointment.class))).thenReturn(existingAppointment);
@@ -98,10 +121,9 @@ public class AppointmentServiceTest {
         AppointmentDto result = service.updateAppointment(1L, updatedDto);
 
         assertNotNull(result);
-        assertEquals("FollowUp", result.type());
-        assertEquals("Updated reason", result.reason());
-        assertEquals("Completed", result.status());
+        assertEquals(AppointmentStatus.PASSED, result.status());
+        assertEquals("Another reason", result.reason());
         verify(repository, times(1)).findById(1L);
-        verify(repository, times(1)).save(any(Appointment.class));*/
+        verify(repository, times(1)).save(any(Appointment.class));
     }
 }

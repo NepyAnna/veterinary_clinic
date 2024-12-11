@@ -19,7 +19,6 @@ public class AppointmentController {
     private final AppointmentService appointmentService;
     private final PatientService patientService;
 
-    @Autowired
     public AppointmentController(AppointmentService appointmentService, PatientService patientService) {
         this.appointmentService = appointmentService;
         this.patientService = patientService;

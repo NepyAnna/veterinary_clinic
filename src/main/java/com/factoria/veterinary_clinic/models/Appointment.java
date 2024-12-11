@@ -1,12 +1,9 @@
 package com.factoria.veterinary_clinic.models;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 import com.factoria.veterinary_clinic.enums.AppointmentStatus;
 import com.factoria.veterinary_clinic.enums.AppointmentType;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -73,20 +70,6 @@ public class Appointment {
         return status;
     }
 
-    @Override
-    public String toString() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return String.format(
-                "Appointment[id=%d, patientId=%d, patientName='%s', appointmentDateTime='%s', type='%s', reason='%s', status='%s']",
-                id,
-                patient != null ? patient.getId() : null,
-                patient != null ? patient.getName() : "null",
-                appointmentDateTime != null ? appointmentDateTime.format(formatter) : "null",
-                type,
-                reason,
-                status);
-    }
-
     public void setAppointmentDateTime(LocalDateTime appointmentDateTime2) {
         this.appointmentDateTime = appointmentDateTime2;
     }
@@ -103,9 +86,9 @@ public class Appointment {
         this.status = entity;
     }
 
-    public void setId(Long id) {
+    /*public void setId(Long id) {
         this.id = id;
-    }
+    }*/
 
     public void setPatient(Patient patient) {
         this.patient = patient;
