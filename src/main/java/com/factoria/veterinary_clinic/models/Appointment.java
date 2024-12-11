@@ -37,7 +37,7 @@ public class Appointment {
     @JsonBackReference
     private Patient patient;
 
-    protected Appointment() {
+    public Appointment() {
     }
 
     public Appointment(Patient patient, LocalDateTime appointmentDateTime, AppointmentType type,

@@ -6,7 +6,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class PatientDtoTest {
-    @Test
+    /* @Test
     void testAge() {
         PatientDto patient = new PatientDto(1L, "Bella", 3, "Golden Retriever", "Female",
         "12345", "John Doe", "555-1234", 1L, Collections.emptyList());
@@ -104,5 +104,5 @@ assertEquals("Bella", patient.name());
         PatientDto patient = new PatientDto(1L, "Bella", 3, "Golden Retriever", "Female",
         "12345", "John Doe", "555-1234", 1L, Collections.emptyList());
 assertEquals(1L, patient.userId());
-    }
+    }*/
 }

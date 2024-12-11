@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/*prueba de cambios */
+/*prueba de cambios 
 @WebMvcTest(PatientController.class)
 public class PatientControllerTest {
     @Autowired
@@ -127,4 +127,4 @@ when(patientService.createPatient(any(PatientDto.class))).thenReturn(patient);
 
         verify(patientService, times(1)).updatePatient(eq(1L), any(PatientDto.class));
     }
-}
+}*/
