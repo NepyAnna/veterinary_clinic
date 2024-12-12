@@ -1,6 +1,73 @@
 package com.factoria.veterinary_clinic.controllers;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Collections;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+
 import com.factoria.veterinary_clinic.dtos.PatientDto;
+import com.factoria.veterinary_clinic.models.Patient;
+import com.factoria.veterinary_clinic.models.User;
+import com.factoria.veterinary_clinic.services.JwtService;
+import com.factoria.veterinary_clinic.services.PatientService;
+import com.factoria.veterinary_clinic.services.TokenBlacklistService;
+import com.factoria.veterinary_clinic.services.UserService;
+
+@WebMvcTest(controllers = PatientController.class)
+@AutoConfigureMockMvc(addFilters = false)
+@MockBean(JwtService.class)
+@MockBean(TokenBlacklistService.class)
+public class PatientControllerTest {
+     @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private PatientService patientService;
+
+    @MockBean
+    private UserService userService;
+
+    private Patient patient;
+    private PatientDto patientDto;
+
+    @BeforeEach
+    void setUp() {
+        patient = new Patient();
+        patient.setId_patient(1L);
+        patient.setName("Buddy");
+
+        patientDto = new PatientDto(1L, "Buddy", 3, "Golden Retriever", "Male", "ID12345", "John Doe", "1234567890", 1L, Collections.emptyList());
+    }
+
+    /*@Test
+    @WithMockUser(roles = {"ADMIN"})
+    void getAllPatients_shouldReturnListOfPatientsForAdmin() throws Exception {
+        when(patientService.getAllPatients()).thenReturn(Collections.singletonList(patient));
+
+        mockMvc.perform(get("/api/patients"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Buddy"));
+
+        verify(patientService, times(1)).getAllPatients();
+    }*/
+
+    
+}
+
+/*import com.factoria.veterinary_clinic.dtos.PatientDto;
 import com.factoria.veterinary_clinic.models.Patient;
 import com.factoria.veterinary_clinic.services.PatientService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,7 +92,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/*prueba de cambios 
+prueba de cambios 
 @WebMvcTest(PatientController.class)
 public class PatientControllerTest {
     @Autowired
@@ -43,7 +110,7 @@ public class PatientControllerTest {
     @BeforeEach
     void setUp() {
         patient = new Patient();
-        patient.setId(1);
+        patient.setId(1L);
         patient.setName("Bella");
         patient.setAge(3);
         patient.setBreed("Golden Retriever");

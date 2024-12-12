@@ -144,4 +144,8 @@ public class Patient {
     public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
     }
+
+    public Long setId(Long id) {
+        return this.id_patient = id;
+    }
 }
