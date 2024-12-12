@@ -1,23 +1,19 @@
 package com.factoria.veterinary_clinic.services;
 
 import com.factoria.veterinary_clinic.enums.Role;
-import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
 
 class JwtServiceTest {
 
     private JwtService jwtService;
-    private Claims mockClaims;
 
     @BeforeEach
     void setUp() {
         jwtService = new JwtService();
-        mockClaims = mock(Claims.class);
     }
 
     @Test
