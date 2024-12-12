@@ -5,7 +5,6 @@ import com.factoria.veterinary_clinic.models.Patient;
 import com.factoria.veterinary_clinic.models.User;
 import com.factoria.veterinary_clinic.repositories.PatientRepository;
 import com.factoria.veterinary_clinic.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,7 +16,6 @@ public class PatientService {
     private final PatientRepository patientRepository;
     private final UserRepository userRepository;
 
-    @Autowired
     public PatientService(PatientRepository patientRepository, UserRepository userRepository) {
         this.patientRepository = patientRepository;
         this.userRepository = userRepository;

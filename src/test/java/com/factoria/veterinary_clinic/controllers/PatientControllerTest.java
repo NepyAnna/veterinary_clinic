@@ -23,7 +23,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.factoria.veterinary_clinic.dtos.PatientDto;
 import com.factoria.veterinary_clinic.models.Patient;
-import com.factoria.veterinary_clinic.models.User;
 import com.factoria.veterinary_clinic.services.JwtService;
 import com.factoria.veterinary_clinic.services.PatientService;
 import com.factoria.veterinary_clinic.services.TokenBlacklistService;

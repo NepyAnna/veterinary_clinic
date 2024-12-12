@@ -1,6 +1,6 @@
 package com.factoria.veterinary_clinic.repositories;
 
-import com.factoria.veterinary_clinic.models.Patient;
+/*import com.factoria.veterinary_clinic.models.Patient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 public class PatientRepositoryTest {
-    /*@Autowired
+    @Autowired
     private PatientRepository patientRepository;
 
     @Test
@@ -72,5 +72,5 @@ public class PatientRepositoryTest {
 
         Optional<Patient> deletedPatient = patientRepository.findById(patient.getId());
         assertThat(deletedPatient).isNotPresent();
-    }*/
-}
+    }
+}*/
