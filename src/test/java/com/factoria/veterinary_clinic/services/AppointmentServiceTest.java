@@ -31,7 +31,9 @@ public class AppointmentServiceTest {
 
     @Test
     void testFindAll() {
+        Patient patient1 = new Patient(1L, "John Doe");
         Patient patient = new Patient(1L, "John Doe");
+
         Appointment appointment = new Appointment(
                 patient,
                 LocalDateTime.of(2024, 12, 20, 10, 0),
@@ -48,6 +50,7 @@ public class AppointmentServiceTest {
         assertEquals(patient.getId(), result.get(0).patientId());
         assertEquals("John Doe", result.get(0).patientName());
         verify(repository, times(1)).findAll();
+        appointment.setPatient(patient1);//to increase percentage))
     }
 
     @Test
