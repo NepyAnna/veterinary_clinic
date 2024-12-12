@@ -1,10 +1,12 @@
 package com.factoria.veterinary_clinic.controllers;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Collections;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -52,19 +55,36 @@ public class PatientControllerTest {
         patientDto = new PatientDto(1L, "Buddy", 3, "Golden Retriever", "Male", "ID12345", "John Doe", "1234567890", 1L, Collections.emptyList());
     }
 
-    /*@Test
+    @Test
     @WithMockUser(roles = {"ADMIN"})
-    void getAllPatients_shouldReturnListOfPatientsForAdmin() throws Exception {
-        when(patientService.getAllPatients()).thenReturn(Collections.singletonList(patient));
+    void createPatient_shouldCreatePatient() throws Exception {
+        when(patientService.createPatient(any())).thenReturn(patient);
 
-        mockMvc.perform(get("/api/patients"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("Buddy"));
+        mockMvc.perform(post("/api/patients")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{" +
+                                "\"name\":\"Buddy\"," +
+                                "\"age\":3," +
+                                "\"breed\":\"Golden Retriever\"," +
+                                "\"gender\":\"Male\"," +
+                                "\"identificationNumber\":\"ID12345\"," +
+                                "\"guardianName\":\"John Doe\"," +
+                                "\"guardianPhone\":\"1234567890\"}"))
+                .andExpect(status().isOk());
 
-        verify(patientService, times(1)).getAllPatients();
-    }*/
+        verify(patientService, times(1)).createPatient(any());
+    }
 
-    
+    @Test
+    @WithMockUser(roles = {"ADMIN"})
+    void deletePatient_shouldDeletePatient() throws Exception {
+        doNothing().when(patientService).deletePatient(1L);
+
+        mockMvc.perform(delete("/api/patients/1"))
+                .andExpect(status().isNoContent());
+
+        verify(patientService, times(1)).deletePatient(1L);
+    }
 }
 
 /*import com.factoria.veterinary_clinic.dtos.PatientDto;
