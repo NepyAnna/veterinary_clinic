@@ -1,216 +1,173 @@
 package com.factoria.veterinary_clinic.controllers;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Collections;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
-
 import com.factoria.veterinary_clinic.dtos.PatientDto;
 import com.factoria.veterinary_clinic.models.Patient;
-import com.factoria.veterinary_clinic.services.JwtService;
+import com.factoria.veterinary_clinic.models.User;
 import com.factoria.veterinary_clinic.services.PatientService;
-import com.factoria.veterinary_clinic.services.TokenBlacklistService;
 import com.factoria.veterinary_clinic.services.UserService;
-
-@WebMvcTest(controllers = PatientController.class)
-@AutoConfigureMockMvc(addFilters = false)
-@MockBean(JwtService.class)
-@MockBean(TokenBlacklistService.class)
-public class PatientControllerTest {
-     @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
-    private PatientService patientService;
-
-    @MockBean
-    private UserService userService;
-
-    private Patient patient;
-    private PatientDto patientDto;
-
-    @BeforeEach
-    void setUp() {
-        patient = new Patient();
-        patient.setId_patient(1L);
-        patient.setName("Buddy");
-
-        patientDto = new PatientDto(1L, "Buddy", 3, "Golden Retriever", "Male", "ID12345", "John Doe", "1234567890", 1L, Collections.emptyList());
-    }
-
-    @Test
-    @WithMockUser(roles = {"ADMIN"})
-    void createPatient_shouldCreatePatient() throws Exception {
-        when(patientService.createPatient(any())).thenReturn(patient);
-
-        mockMvc.perform(post("/api/patients")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{" +
-                                "\"name\":\"Buddy\"," +
-                                "\"age\":3," +
-                                "\"breed\":\"Golden Retriever\"," +
-                                "\"gender\":\"Male\"," +
-                                "\"identificationNumber\":\"ID12345\"," +
-                                "\"guardianName\":\"John Doe\"," +
-                                "\"guardianPhone\":\"1234567890\"}"))
-                .andExpect(status().isOk());
-
-        verify(patientService, times(1)).createPatient(any());
-    }
-
-    @Test
-    @WithMockUser(roles = {"ADMIN"})
-    void deletePatient_shouldDeletePatient() throws Exception {
-        doNothing().when(patientService).deletePatient(1L);
-
-        mockMvc.perform(delete("/api/patients/1"))
-                .andExpect(status().isNoContent());
-
-        verify(patientService, times(1)).deletePatient(1L);
-    }
-}
-
-/*import com.factoria.veterinary_clinic.dtos.PatientDto;
-import com.factoria.veterinary_clinic.models.Patient;
-import com.factoria.veterinary_clinic.services.PatientService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-prueba de cambios 
-@WebMvcTest(PatientController.class)
-public class PatientControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
+@ExtendWith(MockitoExtension.class)
+class PatientControllerTest {
 
-    @MockitoBean
+    @Mock
     private PatientService patientService;
-    
-    @Autowired
-    private ObjectMapper objectMapper;
 
-    private Patient patient;
-    private PatientDto patientDto;
+    @Mock
+    private UserService userService;
+
+    @InjectMocks
+    private PatientController patientController;
+
+    private Patient testPatient;
+    private PatientDto testPatientDto;
+    private User testUser;
+    private UserDetails adminUserDetails;
+    private UserDetails regularUserDetails;
 
     @BeforeEach
     void setUp() {
-        patient = new Patient();
-        patient.setId(1L);
-        patient.setName("Bella");
-        patient.setAge(3);
-        patient.setBreed("Golden Retriever");
-        patient.setGender("Female");
-        patient.setIdentificationNumber("12345");
-        patient.setGuardianName("John Doe");
-        patient.setGuardianPhone("555-1234");
+        testUser = new User();
+        testUser.setId(1L);
+        testUser.setEmail("test@example.com");
 
-        patientDto = new PatientDto(
-                1L,
-                "Bella",
-                3,
-                "Golden Retriever",
-                "Female",
-                "12345",
-                "John Doe",
-                "555-1234",
-                1L,
-                Collections.emptyList()
-        );
+        testPatient = new Patient();
+        testPatient.setId(1L);
+        testPatient.setName("Max");
+        testPatient.setAge(5);
+        testPatient.setBreed("Golden Retriever");
+        testPatient.setGender("Male");
+        testPatient.setIdentificationNumber("123ABC");
+        testPatient.setGuardianName("John Doe");
+        testPatient.setGuardianPhone("123-456-7890");
+        testPatient.setUser(testUser);
+        testPatient.setAppointments(Collections.emptyList());
+
+        testPatientDto = new PatientDto(
+                1L, "Max", 5, "Golden Retriever", "Male",
+                "123ABC", "John Doe", "123-456-7890",
+                1L, Collections.emptyList());
+
+        adminUserDetails = createUserDetails("admin@example.com", "ROLE_ADMIN");
+        regularUserDetails = createUserDetails("test@example.com", "ROLE_USER");
     }
 
     @Test
-    void testCreatePatient() throws Exception {
-when(patientService.createPatient(any(PatientDto.class))).thenReturn(patient);
+    void getAllPatients_AdminUser_ReturnsAllPatients() {
+        when(patientService.getAllPatients()).thenReturn(Arrays.asList(testPatient));
 
-        mockMvc.perform(post("/api/patients")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(patientDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(patient.getId().intValue())))
-                .andExpect(jsonPath("$.name", is(patient.getName())));
+        ResponseEntity<List<PatientDto>> response = patientController.getAllPatients(adminUserDetails);
 
-        verify(patientService, times(1)).createPatient(any(PatientDto.class));
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        assertThat(response.getBody(), hasSize(1));
+        assertThat(response.getBody().get(0).name(), is("Max"));
+        verify(patientService).getAllPatients();
     }
 
     @Test
-    void testDeletePatient() throws Exception {
+    void getAllPatients_RegularUser_ReturnsUserPatients() {
+        when(userService.getUserByEmail(anyString())).thenReturn(Optional.of(testUser));
+        when(patientService.getPatientsByUserId(anyLong())).thenReturn(Arrays.asList(testPatient));
+
+        ResponseEntity<List<PatientDto>> response = patientController.getAllPatients(regularUserDetails);
+
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        assertThat(response.getBody(), hasSize(1));
+        assertThat(response.getBody().get(0).name(), is("Max"));
+        verify(patientService).getPatientsByUserId(1L);
+    }
+
+    @Test
+    void getPatientById_AdminUser_ReturnsPatient() {
+
+        when(patientService.getPatientById(1L)).thenReturn(Optional.of(testPatient));
+
+        ResponseEntity<PatientDto> response = patientController.getPatientById(1L, adminUserDetails);
+
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        assertThat(response.getBody().name(), is("Max"));
+    }
+
+    @Test
+    void getPatientById_NotFound_Returns404() {
+        when(patientService.getPatientById(anyLong())).thenReturn(Optional.empty());
+
+        ResponseEntity<PatientDto> response = patientController.getPatientById(1L, adminUserDetails);
+
+        assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
+        verify(patientService).getPatientById(1L);
+    }
+
+    @Test
+    void createPatient_ValidData_ReturnsCreatedPatient() {
+        when(patientService.createPatient(any(PatientDto.class))).thenReturn(testPatient);
+
+        ResponseEntity<Patient> response = patientController.createPatient(testPatientDto, adminUserDetails);
+
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        assertThat(response.getBody().getName(), is("Max"));
+        verify(patientService).createPatient(any(PatientDto.class));
+    }
+
+    @Test
+    void updatePatient_ValidData_ReturnsUpdatedPatient() {
+
+        when(patientService.updatePatient(anyLong(), any(PatientDto.class))).thenReturn(testPatient);
+
+        ResponseEntity<PatientDto> response = patientController.updatePatient(1L, testPatientDto, adminUserDetails);
+
+        assertThat(response.getStatusCode(), is(HttpStatus.OK));
+        assertThat(response.getBody().name(), is("Max"));
+        verify(patientService).updatePatient(eq(1L), any(PatientDto.class));
+    }
+
+    @Test
+    void deletePatient_ExistingPatient_ReturnsNoContent() {
+
+        when(patientService.getPatientById(1L)).thenReturn(Optional.of(testPatient));
         doNothing().when(patientService).deletePatient(1L);
 
-        mockMvc.perform(delete("/api/patients/1"))
-                .andExpect(status().isNoContent());
+        ResponseEntity<Void> response = patientController.deletePatient(1L, adminUserDetails);
 
-        verify(patientService, times(1)).deletePatient(1L);
+        assertThat(response.getStatusCode(), is(HttpStatus.NO_CONTENT));
+        verify(patientService).deletePatient(1L);
     }
 
     @Test
-    void testGetAllPatients() throws Exception {
-        when(patientService.getAllPatients()).thenReturn(Arrays.asList(patient));
+    void deletePatient_NonExistingPatient_Returns404() {
 
-        mockMvc.perform(get("/api/patients"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(patient.getId().intValue())))
-                .andExpect(jsonPath("$[0].name", is(patient.getName())));
+        when(patientService.getPatientById(1L)).thenReturn(Optional.empty());
+        doThrow(new IllegalArgumentException()).when(patientService).deletePatient(1L);
 
-        verify(patientService, times(1)).getAllPatients();
+        ResponseEntity<Void> response = patientController.deletePatient(1L, adminUserDetails);
+
+        assertThat(response.getStatusCode(), is(HttpStatus.NOT_FOUND));
     }
 
-    @Test
-    void testGetPatientById() throws Exception {
-        when(patientService.getPatientById(1L)).thenReturn(Optional.of(patient));
-
-        mockMvc.perform(get("/api/patients/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(patient.getId().intValue())))
-                .andExpect(jsonPath("$.name", is(patient.getName())));
-
-        verify(patientService, times(1)).getPatientById(1L);
+    private UserDetails createUserDetails(String email, String role) {
+        return new org.springframework.security.core.userdetails.User(
+                email,
+                "password",
+                Collections.singletonList(new SimpleGrantedAuthority(role)));
     }
-
-    @Test
-    void testUpdatePatient() throws Exception {
-        when(patientService.updatePatient(eq(1L), any(PatientDto.class))).thenReturn(patient);
-
-        mockMvc.perform(put("/api/patients/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(patientDto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(patient.getId().intValue())))
-                .andExpect(jsonPath("$.name", is(patient.getName())));
-
-        verify(patientService, times(1)).updatePatient(eq(1L), any(PatientDto.class));
-    }
-}*/
+}
