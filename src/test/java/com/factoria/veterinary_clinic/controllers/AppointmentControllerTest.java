@@ -31,115 +31,116 @@ import com.factoria.veterinary_clinic.services.JwtService;
 import com.factoria.veterinary_clinic.services.PatientService;
 import com.factoria.veterinary_clinic.services.TokenBlacklistService;
 
+@SuppressWarnings("removal")
 @WebMvcTest(controllers = AppointmentController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @MockBean(JwtService.class)
-@MockBean(TokenBlacklistService.class) 
+@MockBean(TokenBlacklistService.class)
 public class AppointmentControllerTest {
-    @Autowired
-    MockMvc mockMvc;
+        @Autowired
+        MockMvc mockMvc;
 
-    @MockBean
-    AppointmentService appointmentService;
+        @MockBean
+        AppointmentService appointmentService;
 
-    @MockBean
-    private PatientService patientService;
+        @MockBean
+        private PatientService patientService;
 
-    @Test
-    @WithMockUser(roles = "USER")
-    void testIndex() throws Exception {
-        AppointmentDto appointmentDto = new AppointmentDto(
-                1L, 1L, "John Doe", LocalDateTime.of(2024, 12, 21, 10, 0),
-                AppointmentType.STANDARD, "Check-up", AppointmentStatus.PENDING);
+        @Test
+        @WithMockUser(roles = "USER")
+        void testIndex() throws Exception {
+                AppointmentDto appointmentDto = new AppointmentDto(
+                                1L, 1L, "John Doe", LocalDateTime.of(2024, 12, 21, 10, 0),
+                                AppointmentType.STANDARD, "Check-up", AppointmentStatus.PENDING);
 
-        when(appointmentService.findAll()).thenReturn(List.of(appointmentDto));
+                when(appointmentService.findAll()).thenReturn(List.of(appointmentDto));
 
-        mockMvc.perform(get("/api/appointments"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.size()").value(1))
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].patientName").value("John Doe"));
-    }
+                mockMvc.perform(get("/api/appointments"))
+                                .andExpect(status().isOk())
+                                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(jsonPath("$.size()").value(1))
+                                .andExpect(jsonPath("$[0].id").value(1))
+                                .andExpect(jsonPath("$[0].patientName").value("John Doe"));
+        }
 
-    @Test
-    @WithMockUser(roles = "USER")
-    void testShow() throws Exception {
-        AppointmentDto appointment = new AppointmentDto(
-                1L, 1L, "John Doe", LocalDateTime.of(2024, 12, 21, 10, 0),
-                AppointmentType.STANDARD, "Check-up", AppointmentStatus.PENDING);
+        @Test
+        @WithMockUser(roles = "USER")
+        void testShow() throws Exception {
+                AppointmentDto appointment = new AppointmentDto(
+                                1L, 1L, "John Doe", LocalDateTime.of(2024, 12, 21, 10, 0),
+                                AppointmentType.STANDARD, "Check-up", AppointmentStatus.PENDING);
 
-        when(appointmentService.findById(1L)).thenReturn(appointment);
+                when(appointmentService.findById(1L)).thenReturn(appointment);
 
-        mockMvc.perform(get("/api/appointments/{id}", 1L))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.patientName").value("John Doe"))
-                .andExpect(jsonPath("$.reason").value("Check-up")); 
-    }
+                mockMvc.perform(get("/api/appointments/{id}", 1L))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value(1))
+                                .andExpect(jsonPath("$.patientName").value("John Doe"))
+                                .andExpect(jsonPath("$.reason").value("Check-up"));
+        }
 
-    @Test
-    @WithMockUser(roles = "USER")
-    void testCreateAppointment() throws Exception {
-        AppointmentDto createdAppointment = new AppointmentDto(
-                1L, 1L, "John Doe", LocalDateTime.of(2024, 12, 21, 10, 0),
-                AppointmentType.STANDARD, "Check-up", AppointmentStatus.PENDING);
+        @Test
+        @WithMockUser(roles = "USER")
+        void testCreateAppointment() throws Exception {
+                AppointmentDto createdAppointment = new AppointmentDto(
+                                1L, 1L, "John Doe", LocalDateTime.of(2024, 12, 21, 10, 0),
+                                AppointmentType.STANDARD, "Check-up", AppointmentStatus.PENDING);
 
-        when(appointmentService.createAppointment(any(AppointmentDto.class))).thenReturn(createdAppointment);
-        when(patientService.isPatientOwnedByUser(1L, "user")).thenReturn(true);
+                when(appointmentService.createAppointment(any(AppointmentDto.class))).thenReturn(createdAppointment);
+                when(patientService.isPatientOwnedByUser(1L, "user")).thenReturn(true);
 
-        mockMvc.perform(post("/api/appointments")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                    "patientId": 1,
-                                    "appointmentDateTime": "2024-12-21T10:00:00",
-                                    "type": "STANDARD",
-                                    "reason": "Check-up",
-                                    "status": "PENDING"
-                                }
-                                """))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.reason").value("Check-up"));
-    }
+                mockMvc.perform(post("/api/appointments")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                                {
+                                                    "patientId": 1,
+                                                    "appointmentDateTime": "2024-12-21T10:00:00",
+                                                    "type": "STANDARD",
+                                                    "reason": "Check-up",
+                                                    "status": "PENDING"
+                                                }
+                                                """))
+                                .andExpect(status().isOk())
+                                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(jsonPath("$.id").value(1))
+                                .andExpect(jsonPath("$.reason").value("Check-up"));
+        }
 
+        @Test
+        @WithMockUser(roles = "USER")
+        void testUpdateAppointment() throws Exception {
+                AppointmentDto updatedAppointment = new AppointmentDto(
+                                1L, 1L, "John Doe", LocalDateTime.of(2024, 12, 22, 10, 0),
+                                AppointmentType.STANDARD, "Updated reason", AppointmentStatus.PENDING);
 
-    @Test
-    @WithMockUser(roles = "USER")
-    void testUpdateAppointment() throws Exception {
-        AppointmentDto updatedAppointment = new AppointmentDto(
-                1L, 1L, "John Doe", LocalDateTime.of(2024, 12, 22, 10, 0),
-                AppointmentType.STANDARD, "Updated reason", AppointmentStatus.PENDING);
+                when(appointmentService.updateAppointment(Mockito.eq(1L), any(AppointmentDto.class)))
+                                .thenReturn(updatedAppointment);
 
-        when(appointmentService.updateAppointment(Mockito.eq(1L), any(AppointmentDto.class))).thenReturn(updatedAppointment);
+                mockMvc.perform(put("/api/appointments/1")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content("""
+                                                {
+                                                    "patientId": 1,
+                                                    "appointmentDateTime": "2024-12-22T10:00:00",
+                                                    "type": "STANDARD",
+                                                    "reason": "Updated reason",
+                                                    "status": "PENDING"
+                                                }
+                                                """))
+                                .andExpect(status().isOk())
+                                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(jsonPath("$.reason").value("Updated reason"));
+        }
 
-        mockMvc.perform(put("/api/appointments/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {
-                                    "patientId": 1,
-                                    "appointmentDateTime": "2024-12-22T10:00:00",
-                                    "type": "STANDARD",
-                                    "reason": "Updated reason",
-                                    "status": "PENDING"
-                                }
-                                """))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.reason").value("Updated reason"));
-    }
+        @Test
+        @WithMockUser(roles = "USER")
+        void testDeleteAppointment() throws Exception {
+                when(patientService.isPatientOwnedByUser(1L, "user")).thenReturn(true);
+                when(appointmentService.findById(1L)).thenReturn(new AppointmentDto(
+                                1L, 1L, "John Doe", LocalDateTime.of(2024, 12, 21, 10, 0),
+                                AppointmentType.STANDARD, "Check-up", AppointmentStatus.PENDING));
 
-    @Test
-    @WithMockUser(roles = "USER")
-    void testDeleteAppointment() throws Exception {
-        when(patientService.isPatientOwnedByUser(1L, "user")).thenReturn(true);
-        when(appointmentService.findById(1L)).thenReturn(new AppointmentDto(
-                1L, 1L, "John Doe", LocalDateTime.of(2024, 12, 21, 10, 0),
-                AppointmentType.STANDARD, "Check-up", AppointmentStatus.PENDING));
-
-        mockMvc.perform(delete("/api/appointments/1"))
-                .andExpect(status().isNoContent());
-    }
+                mockMvc.perform(delete("/api/appointments/1"))
+                                .andExpect(status().isNoContent());
+        }
 }
